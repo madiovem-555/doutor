@@ -5,6 +5,8 @@
 
 import path from 'node:path';
 
+import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
+import { log } from '@core/messages/index.js';
 import * as licensas from '@licensas/licensas.js';
 import { Command } from 'commander';
 
@@ -20,11 +22,15 @@ export function comandoLicencas(): Command {
     .description('Escaneia dependências em busca de licenças desconhecidas')
     .option('--root <path>', 'diretório raiz (padrão: cwd)')
     .action(async (opts: { root?: string }) => {
-      const root = opts.root ? path.resolve(opts.root) : process.cwd();
-      // Corrigido: await + tipo inferido corretamente (ScanResult), sem cast para unknown
-      const result = await licensas.scanCommand({ root });
-      console.log(JSON.stringify(result, null, 2));
-      process.exitCode = (result.problematic && result.problematic.length > 0) ? 2 : 0;
+      try {
+        const root = opts.root ? path.resolve(opts.root) : process.cwd();
+        const result = await licensas.scanCommand({ root });
+        console.log(JSON.stringify(result, null, 2));
+        process.exitCode = (result.problematic && result.problematic.length > 0) ? 2 : 0;
+      } catch (err) {
+        log.erro(`Falha ao escanear licenças: ${err instanceof Error ? err.message : String(err)}`);
+        sair(ExitCode.Failure);
+      }
     });
 
   // subcommand: notices generate
@@ -36,10 +42,15 @@ export function comandoLicencas(): Command {
     .option('--output <file>', 'arquivo de saída')
     .option('--root <path>', 'pasta do projeto')
     .action(async (opts: { ptBr?: boolean; output?: string; root?: string }) => {
-      const root = opts.root ? path.resolve(opts.root) : process.cwd();
-      const res = await licensas.generateNotices({ root, ptBr: Boolean(opts.ptBr), output: opts.output });
-      console.log('Generated notices:', res);
-      process.exit(0);
+      try {
+        const root = opts.root ? path.resolve(opts.root) : process.cwd();
+        const res = await licensas.generateNotices({ root, ptBr: Boolean(opts.ptBr), output: opts.output });
+        console.log('Generated notices:', res);
+        sair(ExitCode.Ok);
+      } catch (err) {
+        log.erro(`Falha ao gerar notices: ${err instanceof Error ? err.message : String(err)}`);
+        sair(ExitCode.Failure);
+      }
     });
 
   // subcommand: disclaimer
@@ -51,11 +62,15 @@ export function comandoLicencas(): Command {
     .option('--root <path>', 'pasta do projeto')
     .option('--dry-run', 'não grava alterações, apenas lista')
     .action(async (opts: { disclaimerPath?: string; root?: string; dryRun?: boolean }) => {
-      const root = opts.root ? path.resolve(opts.root) : process.cwd();
-      // Corrigido: await + tipo inferido corretamente, sem cast para unknown
-      const res = await licensas.addDisclaimer({ root, disclaimerPath: opts.disclaimerPath, dryRun: Boolean(opts.dryRun) });
-      console.log('Disclaimer inserted into files:', res.updatedFiles.length);
-      process.exit(0);
+      try {
+        const root = opts.root ? path.resolve(opts.root) : process.cwd();
+        const res = await licensas.addDisclaimer({ root, disclaimerPath: opts.disclaimerPath, dryRun: Boolean(opts.dryRun) });
+        console.log('Disclaimer inserted into files:', res.updatedFiles.length);
+        sair(ExitCode.Ok);
+      } catch (err) {
+        log.erro(`Falha ao adicionar disclaimer: ${err instanceof Error ? err.message : String(err)}`);
+        sair(ExitCode.Failure);
+      }
     });
 
   disclaimer
@@ -64,16 +79,21 @@ export function comandoLicencas(): Command {
     .option('--disclaimer-path <path>')
     .option('--root <path>')
     .action(async (opts: { disclaimerPath?: string; root?: string }) => {
-      const root = opts.root ? path.resolve(opts.root) : process.cwd();
-      // Corrigido: await + tipo inferido corretamente, sem cast para unknown
-      const res = await licensas.verifyDisclaimer({ root, disclaimerPath: opts.disclaimerPath });
-      if (res.missing.length) {
-        console.error('Missing disclaimer in files:');
-        for (const f of res.missing) console.error('-', f);
-        process.exit(1);
+      try {
+        const root = opts.root ? path.resolve(opts.root) : process.cwd();
+        const res = await licensas.verifyDisclaimer({ root, disclaimerPath: opts.disclaimerPath });
+        if (res.missing.length) {
+          console.error('Missing disclaimer in files:');
+          for (const f of res.missing) console.error('-', f);
+          sair(ExitCode.Failure);
+          return;
+        }
+        console.log('All markdown files include the disclaimer.');
+        sair(ExitCode.Ok);
+      } catch (err) {
+        log.erro(`Falha ao verificar disclaimer: ${err instanceof Error ? err.message : String(err)}`);
+        sair(ExitCode.Failure);
       }
-      console.log('All markdown files include the disclaimer.');
-      process.exit(0);
     });
 
   return cmd;
