@@ -23,11 +23,11 @@
 
 ---
 
-[![CI](https://github.com/ascentusoss/doutor/actions/workflows/ci.yml?badge.svg?branch=main)](https://github.com/i-lopos/doutor/actions/workflows/ci.yml)
-[![Build](https://github.com/ascentusoss/doutor/actions/workflows/build.yml?badge.svg?branch=main)](https://github.com/ascentusoss/doutor/actions/workflows/build.yml)
-[![Monitor Deps](https://github.com/ascentusoss/doutor/actions/workflows/monitor-deps.yml?badge.svg)](https://github.com/ascentusoss/doutor/actions/workflows/monitor-deps.yml)
-[![Compliance](https://github.com/ascentusoss/doutor/actions/workflows/compliance.yml?badge.svg?branch=main)](https://github.com/ascentusoss/doutor/actions/workflows/compliance.yml)
-[![License Gate](https://github.com/ascentusoss/doutor/actions/workflows/license-gate.yml?badge.svg)](https://github.com/ascentusoss/doutor/actions/workflows/license-gate.yml)
+[![CI](https://github.com/madiovem-555/doutor/actions/workflows/ci.yml?badge.svg?branch=main)](https://github.com/i-lopos/doutor/actions/workflows/ci.yml)
+[![Build](https://github.com/madiovem-555/doutor/actions/workflows/build.yml?badge.svg?branch=main)](https://github.com/ascentusoss/doutor/actions/workflows/build.yml)
+[![Monitor Deps](https://github.com/madiovem-555/doutor/actions/workflows/monitor-deps.yml?badge.svg)](https://github.com/ascentusoss/doutor/actions/workflows/monitor-deps.yml)
+[![Compliance](https://github.com/madiovem-555/doutor/actions/workflows/compliance.yml?badge.svg?branch=main)](https://github.com/ascentusoss/doutor/actions/workflows/compliance.yml)
+[![License Gate](https://github.com/madiovem-555/doutor/actions/workflows/license-gate.yml?badge.svg)](https://github.com/ascentusoss/doutor/actions/workflows/license-gate.yml)
 
 ## 🌟 Status do Projeto
 
